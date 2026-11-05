@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>For Fae</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,400;1,500&family=Manrope:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--a:#1B1340;--b:#4B2A6B;--c:#C0527F;--ink:#FFF4F7;--muted:#E8C9D8;--glass:rgba(255,255,255,.09);--edge:rgba(255,255,255,.22);--btn:#FF8FB1;--btnink:#2A0F2C;
+ box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:dark}
+@media(prefers-color-scheme:light){:root:not([data-theme="dark"]){--a:#FFE3EC;--b:#F7C3D8;--c:#CDB4F0;--ink:#3A1633;--muted:#7A4A6E;--glass:rgba(255,255,255,.55);--edge:rgba(120,60,110,.2);--btn:#C2386F;--btnink:#fff;color-scheme:light}}
+:root[data-theme="light"]{--a:#FFE3EC;--b:#F7C3D8;--c:#CDB4F0;--ink:#3A1633;--muted:#7A4A6E;--glass:rgba(255,255,255,.55);--edge:rgba(120,60,110,.2);--btn:#C2386F;--btnink:#fff;color-scheme:light}
+*,*::before,*::after{box-sizing:inherit}
+html{min-height:100%;background:linear-gradient(160deg,var(--a),var(--b) 55%,var(--c)) fixed}
+body{margin:0;min-height:100dvh;color:var(--ink);font:400 1.05rem/1.7 "Manrope",system-ui,sans-serif;display:grid;place-items:center;padding:1.2rem;overflow-x:hidden}
+canvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}
+.orb{position:fixed;border-radius:50%;filter:blur(60px);opacity:.45;pointer-events:none;animation:drift 14s ease-in-out infinite alternate}
+.o1{width:40vmax;height:40vmax;background:var(--c);top:-12vmax;left:-10vmax}
+.o2{width:34vmax;height:34vmax;background:#7A5CFF;bottom:-12vmax;right:-8vmax;animation-delay:-6s;opacity:.3}
+@keyframes drift{to{transform:translate(6vmax,4vmax) scale(1.15)}}
+.card{position:relative;width:min(34rem,100%);min-height:26rem;background:var(--glass);border:1px solid var(--edge);border-radius:28px;padding:2.4rem 2rem 1.6rem;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);display:flex;flex-direction:column;box-shadow:0 20px 70px rgba(0,0,0,.25)}
+.slide{flex:1;display:flex;flex-direction:column;justify-content:center;animation:in .9s ease both}
+@keyframes in{from{opacity:0;transform:translateY(14px);filter:blur(4px)}to{opacity:1;transform:none;filter:none}}
+.kicker{font-size:.8rem;letter-spacing:.28em;text-transform:uppercase;color:var(--muted);margin:0 0 1rem}
+h1{font:italic 500 clamp(2.4rem,9vw,3.6rem)/1.05 "Cormorant Garamond",Georgia,serif;margin:0 0 1rem}
+.slide p{margin:0;color:var(--muted);font-size:1.12rem}
+.sign{margin-top:1.2rem!important;font:italic 400 1.35rem "Cormorant Garamond",Georgia,serif;color:var(--ink)!important}
+.nav{display:flex;align-items:center;justify-content:space-between;margin-top:1.6rem}
+.dots{display:flex;gap:.45rem}.dots i{width:7px;height:7px;border-radius:50%;background:var(--edge);transition:.3s}.dots i.on{background:var(--btn);width:22px;border-radius:6px}
+button{font:500 1rem "Manrope",sans-serif;cursor:pointer;border-radius:999px;border:0}
+.btn{background:var(--btn);color:var(--btnink);padding:.7rem 1.5rem;transition:transform .2s}
+.btn:hover{transform:translateY(-2px)}
+.ghost{background:transparent;color:var(--muted);padding:.7rem .8rem}
+:focus-visible{outline:3px solid var(--btn);outline-offset:3px}
+.ask{display:flex;gap:1rem;align-items:center;margin-top:1.6rem;min-height:4.5rem}
+#yes{transition:transform .25s;transform-origin:left center;font-size:1.1rem}
+#no{background:var(--glass);border:1px solid var(--edge);color:var(--ink);padding:.7rem 1.4rem}
+#no.run{position:fixed;z-index:5;transition:left .25s,top .25s}
+.note{min-height:1.6rem;margin-top:.8rem;font-style:italic;color:var(--muted)}
+@media(prefers-reduced-motion:reduce){.slide,.orb{animation:none}}
+</style>
+</head>
+<body>
+<div class="orb o1"></div><div class="orb o2"></div><canvas id="cv" aria-hidden="true"></canvas>
+<main class="card" id="card">
+  <div class="slide" id="slide" aria-live="polite"></div>
+  <div class="nav" id="nav"><button class="ghost" id="back">Back</button><div class="dots" id="dots"></div><button class="btn" id="next">Continue</button></div>
+</main>
+<script>
+var S=[
+ {k:"A letter, finally",h:"Hi, Fae.",p:"It’s been a long time. I kept this to myself for years, and I wanted to finally say it properly."},
+ {k:"Back then",h:"You were the reason.",p:"In our STPM days, you were the first Muslim person who, without even realising it, made me open up to Islam again. Because of you, I chose to return."},
+ {k:"The honest part",h:"I loved you.",p:"Or maybe I still do. I really don’t know. What I do know is that whatever makes you happy will make me happy too."},
+ {k:"Growing up",h:"I was just a simple-minded boy.",p:"I used to think most things didn’t matter. You made me realise they do. I’ve grown up a little since then, so I chose to say this instead of staying silent."},
+ {k:"From my heart",h:"Thank you, Fae.",p:"For everything you did for me, even the things you never knew you did. I hope you find your happiness soon."},
+ {k:"If you’d like",h:"Maybe coffee or tea?",p:"We could meet up and catch up, no expectations at all. Either way, I’m grateful for you.",sign:"Bye bye, for now.",ask:true}
+];
+var i=0,scale=1,tries=0,done=false;
+var $=function(x){return document.getElementById(x)};
+function render(){
+ var s=S[i],h='<p class="kicker">'+s.k+'</p><h1>'+s.h+'</h1>';
+ if(s.p)h+='<p>'+s.p+'</p>';
+ if(s.sign)h+='<p class="sign">'+s.sign+'</p>';
+ if(s.ask)h+='<div class="ask"><button class="btn pick" data-m="Coffee it is. Whenever you’re ready, just let me know.">Coffee ☕</button><button class="btn pick" data-m="Tea sounds lovely. Whenever you’re ready, just let me know.">Tea 🍵</button></div><div class="note" id="note" role="status"></div>';
+ $("slide").innerHTML=h;
+ $("dots").innerHTML=S.map(function(_,j){return '<i class="'+(j==i?'on':'')+'"></i>'}).join("");
+ $("back").style.visibility=i?"visible":"hidden";
+ $("next").style.display=s.ask?"none":"";
+ if(s.ask)wire();
+}
+$("next").onclick=function(){if(i<S.length-1){i++;render()}};
+$("back").onclick=function(){if(i>0){i--;render()}};
+document.addEventListener("keydown",function(e){if(done||!document.activeElement||document.activeElement.tagName!="BUTTON"){if(e.key=="ArrowRight")$("next").click();if(e.key=="ArrowLeft")$("back").click()}});
+function wire(){
+ [].forEach.call(document.querySelectorAll(".pick"),function(b){b.onclick=function(){$("note").textContent=b.dataset.m;burst()}});
+}
+/* background */
+var cv=$("cv"),cx=cv.getContext("2d"),P=[],W,H,reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+function size(){var r=devicePixelRatio||1;W=innerWidth;H=innerHeight;cv.width=W*r;cv.height=H*r;cx.setTransform(r,0,0,r,0,0)}
+addEventListener("resize",size);size();
+for(var k=0;k<(reduce?20:50);k++)P.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*2+.6,v:Math.random()*.3+.08,p:Math.random()*6});
+var B=[];
+function burst(){for(var k=0;k<70;k++){var a=Math.random()*6.28,s=Math.random()*7+3;B.push({x:W/2,y:H/2,vx:Math.cos(a)*s,vy:Math.sin(a)*s-3,l:1,z:Math.random()*18+14,c:["❤","💗","✨","🌸"][k%4]})}}
+function frame(t){
+ cx.clearRect(0,0,W,H);
+ P.forEach(function(q){q.y-=q.v;if(q.y<-5){q.y=H+5;q.x=Math.random()*W}
+  cx.globalAlpha=.35+.35*Math.sin(t/900+q.p);cx.fillStyle="#fff";cx.beginPath();cx.arc(q.x,q.y,q.r,0,6.28);cx.fill()});
+ cx.globalAlpha=1;
+ B=B.filter(function(b){return b.l>0});
+ B.forEach(function(b){b.x+=b.vx;b.y+=b.vy;b.vy+=.16;b.l-=.008;cx.globalAlpha=Math.max(0,b.l);cx.font=b.z+"px serif";cx.fillText(b.c,b.x,b.y)});
+ if(!reduce||B.length)requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+render();
+</script>
+</body>
+</html>
