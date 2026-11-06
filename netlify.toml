@@ -1,7 +1,6 @@
-# Static site: no build step, serve files from the repo root.
+# Static site: no build step, serve files from the public/ folder.
 [build]
-  publish = "."
-  command = ""
+  publish = "public"
   functions = "netlify/functions"
 
 # Serve the page at the site root as well as /faesr
